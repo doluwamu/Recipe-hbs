@@ -1,0 +1,16 @@
+
+<div class='recipe-container'>
+    {{#each recipes}}
+            <div class='recipe-card'>
+                <div class='recipe-infos'>
+                    <img src={{image}} alt={{name}} />
+                    <h3>{{name}}</h1>
+                    <p>Stars: {{rating}}</h1>
+                    <p>Reviews: {{numReviews}}</p> 
+                    <br/>
+                    <br/>
+                    <br/>
+                </div>
+            </div>
+    {{/each}}
+</div>
