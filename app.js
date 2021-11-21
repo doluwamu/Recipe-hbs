@@ -2,10 +2,13 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import { engine } from "express-handlebars";
+import hbs from "express-handlebars";
 import mongoose from "mongoose";
-import Recipe from "./models/recipeModel.js";
+import hbsHelpers from "./helpers/hbsHelpers.js";
+import recipeRoutes from "./routes/recipeRoutes.js";
+import aboutRoutes from "./routes/aboutRoutes.js";
 
+// hbsHelpers(hbs);
 dotenv.config();
 
 // Initialize express
@@ -30,41 +33,18 @@ mongoose.connect(
 // Templating engine
 app.engine(
   ".hbs",
-  engine({
+  hbs.engine({
     extname: ".hbs",
     partialsDir: `${__dirname}/views/partials/`,
+    helpers: hbsHelpers,
   })
 );
 app.set("view engine", ".hbs");
 app.set("views", "./views");
 
 // Routes
-app.get("/", async (req, res) => {
-  try {
-    const recipes = await Recipe.find({}).lean();
-
-    return res.render("home", { title: "Recipes", recipes });
-  } catch (error) {
-    console.log("error");
-    return res.render("422Page", { title: "Error 422" });
-  }
-});
-
-app.get("/recipe/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const recipe = await Recipe.findById(id).lean();
-
-    return res.render("recipe", { title: "Recipes", recipe });
-  } catch (error) {
-    console.log("error");
-    return res.render("422Page", { title: "Error 422" });
-  }
-});
-
-app.get("/about", (req, res) => {
-  res.render("about");
-});
+app.use("/", recipeRoutes);
+app.use("/about", aboutRoutes);
 
 const PORT = process.env.PORT || 6500;
 
